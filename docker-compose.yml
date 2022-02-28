@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  app:
+    image: app_rust
+    depends_on:
+      - db
+    build:
+      context: ./
+      #Define your custom rust version uncoment this
+      #args:
+      #  IMAGE: rust:1.59.0-alpine3.15
+    ports:
+      #Define your customs ports
+      - 8080:8080
+    volumes:
+      - ./:/app
+      - target:/target
+    networks:
+      - network
+    environment:
+      - DATABASE_URL=postgres://user1:pass1234@db/example
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user1
+      POSTGRES_DB: example
+      POSTGRES_PASSWORD: pass1234
+    networks:
+      - network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+networks:
+  network:
+
+volumes:
+  target:
+  postgres:
